@@ -43,7 +43,7 @@ namespace MinecraftLauncherDSS
         string[,] arrayAssets = new string[5000, 2];         // linhas,colunas
         string[,] arrayArquivosJava = new string[1000,1];    // linhas,colunas
 
-        bool verificarVercao = false;
+        bool verificarVersao = false;
 
         //links: https://gist.github.com/skyrising/95a8e6a7287634e097ecafa2f21c240f
         string url_version_manifest = "https://piston-meta.mojang.com/mc/game/version_manifest.json";
@@ -72,7 +72,7 @@ namespace MinecraftLauncherDSS
             comboBox_TypeDownload.SelectedIndex = 0;
 
             baixarImagemBackgroud();
-            verificarVercoesBaixadas();
+            verificarVersoesBaixadas();
             pegarNick_uuid_checkBox();
         }
 
@@ -83,8 +83,6 @@ namespace MinecraftLauncherDSS
             //? https://launchercontent.mojang.com/games.json
             try
             {
-
-
                 string baseUrl = "https://launchercontent.mojang.com";
                 string jsonUrl = baseUrl + "/games.json";
                 string imageUrl = "";
@@ -123,7 +121,7 @@ namespace MinecraftLauncherDSS
 
 
         // Procura por todos os arquivos .jar dentro da pasta versions, e add no ComboBox
-        private void verificarVercoesBaixadas()
+        private void verificarVersoesBaixadas()
         {
             comboBox_gameVersion.Items.Clear();
 
@@ -133,8 +131,8 @@ namespace MinecraftLauncherDSS
                 foreach (var item in arquivosJAR)
                 {
                     string arquivo = item.Substring(item.LastIndexOf("\\") + 1);        // Corta na ultima  \  apaga oq tem antes
-                    string vercao = arquivo.Substring(0, arquivo.Length - 4);           // Apaga o .JAR
-                    comboBox_gameVersion.Items.Add(vercao);                             // 1.19.4
+                    string versao = arquivo.Substring(0, arquivo.Length - 4);           // Apaga o .JAR
+                    comboBox_gameVersion.Items.Add(versao);                             // 1.19.4
                 }
                 comboBox_gameVersion.SelectedIndex = 0;
             }
@@ -339,94 +337,96 @@ namespace MinecraftLauncherDSS
             }
         }
 
-
+        JObject jsonObj;
 
 
         private void Verificar_VersionManifest(object sender, EventArgs e)
         {
-            int quantidadeVercoes = 0;
+            int quantidadeVersoes = 0;
             int contadeiro = 0;
 
-            // Baixa só uma vez a lista de verções na sessão atual, se sair uma nova verção após clicar tem que reabrir o programa
-            if (verificarVercao == false)   
+            // Baixa só uma vez a lista de versões na sessão atual, se sair uma nova verção após clicar tem que reabrir o programa
+            if (verificarVersao == false)
             {
                 WebRequest solicitacao = HttpWebRequest.Create(url_version_manifest);
                 WebResponse resposta = solicitacao.GetResponse();
                 StreamReader ler_get = new StreamReader(resposta.GetResponseStream());
-                JObject jsonObj = JObject.Parse(ler_get.ReadToEnd());
-
-                json_version_manifest json_version_manifest = new json_version_manifest
-                {
-                    release = (string)jsonObj["latest"]["release"],     // apenas a release  mais recente   exemplo "release:1.19.4"   em 24/04/2023
-                    snapshot = (string)jsonObj["latest"]["snapshot"],   // apenas a snapshot mais recente   exemplo "snapshot:23w16a"  em 24/04/2023
-
-                    id = from p in jsonObj["versions"] select (string)p["id"],                  //1.19.4
-                    type = from p in jsonObj["versions"] select (string)p["type"],              //release
-                    url = from p in jsonObj["versions"] select (string)p["url"],                //https://piston-meta.mojang.com/v1/packages/f42c5f3f354ab3fef44088fe61e9c1cdbc25a8cc/1.19.4.json
-                    releaseTime = from p in jsonObj["versions"] select (string)p["releaseTime"] //2023-03-14T12:56:18+00:00
-                };
-
-                //quantidade de itens/verções , mais de 687 
-                foreach (var conteudo in json_version_manifest.id)
-                {
-                    if (conteudo != null)
-                    {
-                        quantidadeVercoes++;
-                    }
-                }
-
-
-                foreach (var conteudo in json_version_manifest.id)
-                {
-                    if (conteudo != null & contadeiro < quantidadeVercoes)
-                    {
-                        addArray_version_manifest(contadeiro, conteudo.ToString(), "id");
-                        contadeiro++;
-                    }
-                }
-
-                contadeiro = 0;
-                foreach (var conteudo in json_version_manifest.type)
-                {
-                    if (conteudo != null & contadeiro < quantidadeVercoes)
-                    {
-                        addArray_version_manifest(contadeiro, conteudo.ToString(), "type");
-                        contadeiro++;
-                    }
-                }
-
-                contadeiro = 0;
-                foreach (var conteudo in json_version_manifest.url)
-                {
-                    if (conteudo != null & contadeiro < quantidadeVercoes)
-                    {
-                        addArray_version_manifest(contadeiro, conteudo.ToString(), "url");
-                        contadeiro++;
-                    }
-                }
-
-                contadeiro = 0;
-                foreach (var conteudo in json_version_manifest.releaseTime)
-                {
-                    if (conteudo != null & contadeiro < quantidadeVercoes)
-                    {
-                        addArray_version_manifest(contadeiro, conteudo.ToString(), "releaseTime");
-                        contadeiro++;
-                    }
-                }
-
-                verificarVercao = true;                
+                jsonObj = JObject.Parse(ler_get.ReadToEnd());
+                verificarVersao = true;
             }
+
+            json_version_manifest json_version_manifest = new json_version_manifest
+            {
+                release = (string)jsonObj["latest"]["release"],     // apenas a release  mais recente   exemplo "release:1.19.4"   em 24/04/2023
+                snapshot = (string)jsonObj["latest"]["snapshot"],   // apenas a snapshot mais recente   exemplo "snapshot:23w16a"  em 24/04/2023
+
+                id = from p in jsonObj["versions"] select (string)p["id"],                  //1.19.4
+                type = from p in jsonObj["versions"] select (string)p["type"],              //release
+                url = from p in jsonObj["versions"] select (string)p["url"],                //https://piston-meta.mojang.com/v1/packages/f42c5f3f354ab3fef44088fe61e9c1cdbc25a8cc/1.19.4.json
+                releaseTime = from p in jsonObj["versions"] select (string)p["releaseTime"] //2023-03-14T12:56:18+00:00
+            };
+
+            //quantidade de itens/versões , mais de 687 
+            foreach (var conteudo in json_version_manifest.id)
+            {
+                if (conteudo != null)
+                {
+                    quantidadeVersoes++;
+                }
+            }
+
+
+            foreach (var conteudo in json_version_manifest.id)
+            {
+                if (conteudo != null & contadeiro < quantidadeVersoes)
+                {
+                    addArray_version_manifest(contadeiro, conteudo.ToString(), "id");
+                    contadeiro++;
+                }
+            }
+
+            contadeiro = 0;
+            foreach (var conteudo in json_version_manifest.type)
+            {
+                if (conteudo != null & contadeiro < quantidadeVersoes)
+                {
+                    addArray_version_manifest(contadeiro, conteudo.ToString(), "type");
+                    contadeiro++;
+                }
+            }
+
+            contadeiro = 0;
+            foreach (var conteudo in json_version_manifest.url)
+            {
+                if (conteudo != null & contadeiro < quantidadeVersoes)
+                {
+                    addArray_version_manifest(contadeiro, conteudo.ToString(), "url");
+                    contadeiro++;
+                }
+            }
+
+            contadeiro = 0;
+            foreach (var conteudo in json_version_manifest.releaseTime)
+            {
+                if (conteudo != null & contadeiro < quantidadeVersoes)
+                {
+                    addArray_version_manifest(contadeiro, conteudo.ToString(), "releaseTime");
+                    contadeiro++;
+                }
+            }
+
+
+
 
             comboBox_VersionsDownload.Items.Clear();
 
 
-            // Inclui as verções no comboBox
-            for (int i = 0; i < quantidadeVercoes; i++)
+            // Inclui as versões no comboBox
+            for (int i = 0; i < quantidadeVersoes; i++)
             {
                 if (comboBox_TypeDownload.Text == "release")
                 {
-                    if (conteudoCompleto[i, 1]== "release")
+                    if (conteudoCompleto[i, 1] == "release")
                     {
                         comboBox_VersionsDownload.Items.Add(conteudoCompleto[i, 0]);
                     }
@@ -609,7 +609,7 @@ namespace MinecraftLauncherDSS
             label_Titulo.Text = "MINECRAFT LAUCHER DSS";
             label_Titulo.Location = new Point(336, 11);
 
-            verificarVercoesBaixadas();
+            verificarVersoesBaixadas();
 
             MessageBox.Show("Verção " + comboBox_VersionsDownload.Text + " baixada com sucesso!");
             this.Enabled = true;
@@ -617,7 +617,7 @@ namespace MinecraftLauncherDSS
 
 
 
-        private void criarPastas(string vercao)
+        private void criarPastas(string versao)
         {
             // Verifica se existe os diretorios, se não, cria eles
             if (!Directory.Exists(gameDir + "/assets/indexes"))
@@ -631,9 +631,9 @@ namespace MinecraftLauncherDSS
             }
 
 
-            if (!Directory.Exists(gameDir + "/versions/" + vercao))
+            if (!Directory.Exists(gameDir + "/versions/" + versao))
             {
-                Directory.CreateDirectory(gameDir + "/versions/" + vercao);
+                Directory.CreateDirectory(gameDir + "/versions/" + versao);
             }
 
             //if (!Directory.Exists(gameDir + "/assets/objects"))
@@ -781,10 +781,10 @@ namespace MinecraftLauncherDSS
 
 
 
-        // Ao clicar no comboBox escrito 'verções', o conteudo é "substituido"
+        // Ao clicar no comboBox escrito 'versões', o conteudo é "substituido"
         private void comboBox_TypeDownload_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (verificarVercao == false)
+            if (verificarVersao == false)
             {
                 comboBox_TypeDownload.Items.Clear();
                 comboBox_TypeDownload.Items.Add("release");
