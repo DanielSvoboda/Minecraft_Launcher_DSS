@@ -65,10 +65,9 @@ namespace MinecraftLauncherDSS
         }
 
 
-
         private void Form1_Load(object sender, EventArgs e)
         {
-            comboBox_TypeDownload.Items.Add("Verção");
+            comboBox_TypeDownload.Items.Add("Versão");
             comboBox_TypeDownload.SelectedIndex = 0;
 
             baixarImagemBackgroud();
@@ -80,7 +79,6 @@ namespace MinecraftLauncherDSS
 
         private void baixarImagemBackgroud()
         {
-            //? https://launchercontent.mojang.com/games.json
             try
             {
                 string baseUrl = "https://launchercontent.mojang.com";
@@ -124,7 +122,6 @@ namespace MinecraftLauncherDSS
         private void verificarVersoesBaixadas()
         {
             comboBox_gameVersion.Items.Clear();
-
             try
             {
                 string[] arquivosJAR = Directory.GetFiles(gameDir + "/versions", "*.jar", SearchOption.AllDirectories);
@@ -162,7 +159,6 @@ namespace MinecraftLauncherDSS
                 string checkBoxState = File.ReadAllText(checkBox_FecharAoIniciarFilePath);
                 checkBox_FecharAoIniciar.Checked = bool.Parse(checkBoxState);
             }
-
         }
 
 
@@ -170,9 +166,7 @@ namespace MinecraftLauncherDSS
         {
             if (comboBox_gameVersion.Text == "") return;
 
-
             string url = gameDir + @"\versions\"+ comboBox_gameVersion.Text +@"\"+ comboBox_gameVersion.Text + ".json";
-
             username = textBox_username.Text;
             if (username.Length < 3 || username.Length > 16)
             {
@@ -200,8 +194,6 @@ namespace MinecraftLauncherDSS
                 File.WriteAllText(checkBox_FecharAoIniciarFilePath, checkBox_FecharAoIniciar.Checked.ToString());
 
 
-
-
                 uuid = textBox_uuid.Text;
                 gameVersion = comboBox_gameVersion.Text;
                 accessToken = textBox_accessToken.Text;
@@ -226,7 +218,6 @@ namespace MinecraftLauncherDSS
 
                     LibraryPaths = new List<string>()
                 };
-
 
 
                 // refatorar e usar o sistema atual...
@@ -317,7 +308,6 @@ namespace MinecraftLauncherDSS
                     Environment.Exit(1);
                 }
 
-
                 // Um dialog para ver os argumentos (comandoAzul)
                 if (false)
                 {
@@ -337,15 +327,15 @@ namespace MinecraftLauncherDSS
             }
         }
 
-        JObject jsonObj;
 
+        JObject jsonObj;
 
         private void Verificar_VersionManifest(object sender, EventArgs e)
         {
             int quantidadeVersoes = 0;
             int contadeiro = 0;
 
-            // Baixa só uma vez a lista de versões na sessão atual, se sair uma nova verção após clicar tem que reabrir o programa
+            // Baixa só uma vez a lista de versões na sessão atual, se sair uma nova versão após clicar tem que reabrir o programa
             if (verificarVersao == false)
             {
                 WebRequest solicitacao = HttpWebRequest.Create(url_version_manifest);
@@ -416,10 +406,7 @@ namespace MinecraftLauncherDSS
             }
 
 
-
-
             comboBox_VersionsDownload.Items.Clear();
-
 
             // Inclui as versões no comboBox
             for (int i = 0; i < quantidadeVersoes; i++)
@@ -501,7 +488,7 @@ namespace MinecraftLauncherDSS
             this.Enabled = false; 
             criarPastas(comboBox_VersionsDownload.Text);
             
-            string url = ""; // Pega o url da verção selecionada no comboBox
+            string url = ""; // Pega o url da versão selecionada no comboBox
 
             for (var i = 0; i < conteudoCompleto.Length; i++)
             {
@@ -517,7 +504,6 @@ namespace MinecraftLauncherDSS
             WebResponse resposta = solicitacao.GetResponse();
             StreamReader ler_get = new StreamReader(resposta.GetResponseStream());
             JObject jsonObj_filesGame = JObject.Parse(ler_get.ReadToEnd());
-
 
             json_filesGame json_filesGame = new json_filesGame
             {
@@ -543,7 +529,6 @@ namespace MinecraftLauncherDSS
             download(json_filesGame.log_configs, "assets/log_configs", "");                                                             //client-1.12.xml   (nada importante)
 
             
-
             // Armazena no arrayLibraries 1,0=path_libraries | 1,1=url_libraries   - caminho/url
             int contadeiro = 0;
             foreach (var conteudo in json_filesGame.path_libraries)
@@ -581,7 +566,6 @@ namespace MinecraftLauncherDSS
             }
 
 
-
             // Baixa as assets   imagens/sons/lingua...            \minecraft2\assets\indexes\3.json            
             string assets_indexes_Json = json_filesGame.assetIndex.Substring(json_filesGame.assetIndex.LastIndexOf("/") + 1);
             var json_assets = File.ReadAllText(gameDir + @"\assets\indexes\"+ assets_indexes_Json);
@@ -590,7 +574,7 @@ namespace MinecraftLauncherDSS
 
             foreach (KeyValuePair<string, Objects_assets> pair in result.objects)
             {
-                string path_Assets = pair.Key;  // nem usa
+                string path_Assets = pair.Key;
                 string hash = pair.Value.hash;
                 string hash_2 = hash.Substring(0, 2);
                 string urlDownload = url_assets + "/" + hash_2 + "/"+ hash;
@@ -603,7 +587,6 @@ namespace MinecraftLauncherDSS
                 download(urlDownload, "assets/objects/"+hash_2, hash);
             }
 
-
             await Task.Delay(2000);
 
             label_Titulo.Text = "MINECRAFT LAUCHER DSS";
@@ -611,7 +594,7 @@ namespace MinecraftLauncherDSS
 
             verificarVersoesBaixadas();
 
-            MessageBox.Show("Verção " + comboBox_VersionsDownload.Text + " baixada com sucesso!");
+            MessageBox.Show("Versão " + comboBox_VersionsDownload.Text + " baixada com sucesso!");
             this.Enabled = true;
         }
 
@@ -629,7 +612,6 @@ namespace MinecraftLauncherDSS
             {
                 Directory.CreateDirectory(gameDir + "/assets/log_configs");
             }
-
 
             if (!Directory.Exists(gameDir + "/versions/" + versao))
             {
@@ -805,7 +787,5 @@ namespace MinecraftLauncherDSS
         {
             Environment.Exit(1);
         }
-
-
     }
 }
