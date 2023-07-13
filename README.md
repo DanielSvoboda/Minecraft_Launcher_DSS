@@ -9,7 +9,8 @@ releases, snapshots, old_beta e old_alpha.<br><br>
 Insira seu nick (nome) do Minecraft e se desejar,<br>
 insira o UUID da sua skin para usá-la no jogo.
 
-  <img width="900" alt="portfolio_view" src="https://raw.githubusercontent.com/DanielSvoboda/Minecraft_Launcher_DSS/main/print.png">
+  <img width="900" alt="portfolio_view" src="https://raw.githubusercontent.com/DanielSvoboda/Minecraft_Launcher_DSS/main/print.png"><br>
+  <img width="900" alt="portfolio_view" src="https://raw.githubusercontent.com/DanielSvoboda/Minecraft_Launcher_DSS/main/print2.png">
 
 Recursos: Costura.Fordy  ,  Newtonsoft.Json
 
