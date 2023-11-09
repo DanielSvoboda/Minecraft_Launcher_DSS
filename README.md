@@ -2,9 +2,10 @@
 
 •DOWNLOAD: https://github.com/DanielSvoboda/Minecraft_Launcher_DSS/raw/main/MinecraftLauncherDSS.exe
 
-Permite baixar todos os arquivos diretamente da Mojang para executar o Minecraft java edition.<br>
-É possível baixar qualquer versão do jogo, incluindo:<br>
-releases, snapshots, old_beta e old_alpha.<br><br>
+É possível jogar/baixar qualquer versão do Minecraft java edition, incluindo:<br>
+releases, snapshots, old_beta e old_alpha.<br>
+
+Permite baixar todos os arquivos diretamente da Mojang, utilizando API's não documentadas.<br>
 
 Insira seu nick (nome) do Minecraft e se desejar,<br>
 insira o UUID da sua skin para usá-la no jogo.
