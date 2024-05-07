@@ -30,7 +30,7 @@ namespace MinecraftLauncherDSS
 
         //bool operatingSystem64bit = Environment.Is64BitOperatingSystem;
 
-        string gameDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\minecraft2";
+        string gameDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft2";
         string username;        // Nick
         string uuid;            // Skin/Capa
         string gameVersion;     // Version 
@@ -519,13 +519,12 @@ namespace MinecraftLauncherDSS
                 //os_libraries = from p in json["libraries"] select (string)p["rules"]["os"]["name"],
             };
 
-
             label_Titulo.Location = new Point(9, 11);
 
             download_javao(json_filesGame.java);                                                                                        // JAVA             todos os arquivos do java 
             download(url, "versions/" + comboBox_VersionsDownload.Text, "");                                                            //1.19.4.json       contem os argumentos..
             download(json_filesGame.url_client, "versions/" + comboBox_VersionsDownload.Text, comboBox_VersionsDownload.Text + ".jar"); //1.19.4.jar        jar
-            download(json_filesGame.assetIndex, "assets/indexes" , "");                                                                 //3.json            (hash dos arquivos)
+            download(json_filesGame.assetIndex, "assets/indexes", "");                                                                 //3.json            (hash dos arquivos)
             download(json_filesGame.log_configs, "assets/log_configs", "");                                                             //client-1.12.xml   (nada importante)
 
             
@@ -566,7 +565,7 @@ namespace MinecraftLauncherDSS
             }
 
 
-            // Baixa as assets   imagens/sons/lingua...            \minecraft2\assets\indexes\3.json            
+            // Baixa as assets   imagens/sons/lingua...            \.minecraft2\assets\indexes\3.json            
             string assets_indexes_Json = json_filesGame.assetIndex.Substring(json_filesGame.assetIndex.LastIndexOf("/") + 1);
             var json_assets = File.ReadAllText(gameDir + @"\assets\indexes\"+ assets_indexes_Json);
             var result = JsonConvert.DeserializeObject<Json_assets>(json_assets);
@@ -750,15 +749,21 @@ namespace MinecraftLauncherDSS
 
 
         // Exemplo:   download( "https://www.google.com/robots.txt", "assets/objects" , "robots.txt" );
-        private void download(string url, string diretorio, string nome)    
+        private void download(string url, string diretorio, string nome)
         {
             using (WebClient wc = new WebClient())
             {
-                // se o parametro 'nome' estiver em branco, vai usar o nome 'original'
-                // nome = (nome == "") ? url.Substring(url.LastIndexOf("/") + 1) : nome;
-                wc.DownloadFileAsync(new Uri(url),gameDir + "/" + diretorio + "/" + nome);
+                // Se o parametro 'nome' estiver em branco, vai usar o nome 'original'
+                nome = (nome == "") ? url.Substring(url.LastIndexOf("/") + 1) : nome;
+
+                // Download do arquivo de forma síncrona
+                wc.DownloadFile(url, gameDir + "/" + diretorio + "/" + nome);
+
+                // Atualizar a interface do usuário após o download / NÃO FUNCIONA DIREITO :/
+                label_Titulo.Invoke((Action)(() => {
+                    label_Titulo.Text = "Baixando: " + diretorio + "/" + nome;
+                }));
             }
-            label_Titulo.Text = "Baixando: " + diretorio+ "/"+ nome;
         }
 
 
