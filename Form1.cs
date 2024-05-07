@@ -125,9 +125,13 @@ namespace MinecraftLauncherDSS
             try
             {
                 string[] arquivosJAR = Directory.GetFiles(gameDir + "/versions", "*.jar", SearchOption.AllDirectories);
+
+                // Ordena o array de forma decrescente
+                Array.Sort(arquivosJAR, (a, b) => String.Compare(b, a));
+
                 foreach (var item in arquivosJAR)
                 {
-                    string arquivo = item.Substring(item.LastIndexOf("\\") + 1);        // Corta na ultima  \  apaga oq tem antes
+                    string arquivo = item.Substring(item.LastIndexOf("\\") + 1);        // Corta na última "\" e apaga o que tem antes
                     string versao = arquivo.Substring(0, arquivo.Length - 4);           // Apaga o .JAR
                     comboBox_gameVersion.Items.Add(versao);                             // 1.19.4
                 }
@@ -138,6 +142,7 @@ namespace MinecraftLauncherDSS
                 // Nada :)
             }
         }
+
 
         private void pegarNick_uuid_checkBox()
         {
@@ -170,11 +175,11 @@ namespace MinecraftLauncherDSS
             username = textBox_username.Text;
             if (username.Length < 3 || username.Length > 16)
             {
-                MessageBox.Show("O nome de usuário deve ter entre 3 e 16 caracteres.");
+                MessageBox.Show("O Nick deve ter entre 3 e 16 caracteres.");
             }
             else if (!username.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '.'))
             {
-                MessageBox.Show("O nome de usuário só pode conter letras, números, sublinhados e pontos.");
+                MessageBox.Show("O Nick só pode conter letras, números, sublinhados e pontos.");
             }
             else
             {
@@ -193,8 +198,15 @@ namespace MinecraftLauncherDSS
                 string checkBox_FecharAoIniciarFilePath = Path.Combine(gameDir, "checkBox_FecharAoIniciar.txt");
                 File.WriteAllText(checkBox_FecharAoIniciarFilePath, checkBox_FecharAoIniciar.Checked.ToString());
 
-
-                uuid = textBox_uuid.Text;
+                if (textBox_uuid.Text == "")
+                {
+                    uuid = "dab2e2bbd58247ce8404516910f54d74";
+                }
+                else
+                {
+                    uuid = textBox_uuid.Text;
+                }
+                
                 gameVersion = comboBox_gameVersion.Text;
                 accessToken = textBox_accessToken.Text;
 
@@ -253,7 +265,7 @@ namespace MinecraftLauncherDSS
                 //string comandoAzul = javaRuntime + " -Xss1M -cp "; //cmd
                 string comandoAzul = " -Xss1M -cp ";
                 string classpath = string.Join(";", json_iniciar.LibraryPaths);
-                comandoAzul += classpath + ";" + gameDir + @"\versions\" + comboBox_gameVersion.Text + @"\" + comboBox_gameVersion.Text + @".jar" + @" -Xmx2G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -Dlog4j.configurationFile=" + gameDir + @"\assets\log_configs\" + json_iniciar.Dlog4j + " net.minecraft.client.main.Main ";
+                comandoAzul += classpath + ";" + gameDir + @"\versions\" + comboBox_gameVersion.Text + @"\" + comboBox_gameVersion.Text + @".jar" + @" -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -Dlog4j.configurationFile=" + gameDir + @"\assets\log_configs\" + json_iniciar.Dlog4j + " net.minecraft.client.main.Main ";
 
 
                 foreach (var item in json_iniciar.arguments)
@@ -791,6 +803,29 @@ namespace MinecraftLauncherDSS
         private void button_FecharTUDO_Click(object sender, EventArgs e)
         {
             Environment.Exit(1);
+        }
+
+        private void textBox_uuid_TextChanged(object sender, EventArgs e)
+        {
+            if (textBox_uuid.Text.Length == 32)
+            {
+                try
+                {
+                    string url = "https://api.mineatar.io/body/full/";
+                        using (WebClient webClient = new WebClient())
+                        {
+                            using (Stream stream = webClient.OpenRead(url + textBox_uuid.Text + "?scale=10"))
+                            {
+                            pictureBox_UUID.Image = Image.FromStream(stream);
+                            }
+                        }
+                }
+                catch (Exception)
+                {
+                    pictureBox_UUID.Image = null;
+                    throw;
+                }
+            }
         }
     }
 }

@@ -45,12 +45,14 @@ namespace MinecraftLauncherDSS
             this.label_Titulo = new System.Windows.Forms.Label();
             this.button_Minimizar = new System.Windows.Forms.Button();
             this.panel_Principal = new System.Windows.Forms.Panel();
+            this.pictureBox_UUID = new System.Windows.Forms.PictureBox();
             this.checkBox_Demo = new System.Windows.Forms.CheckBox();
             this.checkBox_FecharAoIniciar = new System.Windows.Forms.CheckBox();
             this.comboBox_gameVersion = new System.Windows.Forms.ComboBox();
             this.groupBox_Download = new System.Windows.Forms.GroupBox();
             this.panel_Barra.SuspendLayout();
             this.panel_Principal.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_UUID)).BeginInit();
             this.groupBox_Download.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -77,6 +79,7 @@ namespace MinecraftLauncherDSS
             this.textBox_uuid.Name = "textBox_uuid";
             this.textBox_uuid.Size = new System.Drawing.Size(200, 20);
             this.textBox_uuid.TabIndex = 2;
+            this.textBox_uuid.TextChanged += new System.EventHandler(this.textBox_uuid_TextChanged);
             // 
             // textBox_accessToken
             // 
@@ -196,6 +199,7 @@ namespace MinecraftLauncherDSS
             // panel_Principal
             // 
             this.panel_Principal.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel_Principal.Controls.Add(this.pictureBox_UUID);
             this.panel_Principal.Controls.Add(this.checkBox_Demo);
             this.panel_Principal.Controls.Add(this.checkBox_FecharAoIniciar);
             this.panel_Principal.Controls.Add(this.comboBox_gameVersion);
@@ -213,6 +217,16 @@ namespace MinecraftLauncherDSS
             this.panel_Principal.Size = new System.Drawing.Size(820, 379);
             this.panel_Principal.TabIndex = 17;
             // 
+            // pictureBox_UUID
+            // 
+            this.pictureBox_UUID.BackColor = System.Drawing.Color.Transparent;
+            this.pictureBox_UUID.Location = new System.Drawing.Point(20, 6);
+            this.pictureBox_UUID.Name = "pictureBox_UUID";
+            this.pictureBox_UUID.Size = new System.Drawing.Size(124, 278);
+            this.pictureBox_UUID.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.pictureBox_UUID.TabIndex = 20;
+            this.pictureBox_UUID.TabStop = false;
+            // 
             // checkBox_Demo
             // 
             this.checkBox_Demo.AutoSize = true;
@@ -226,6 +240,8 @@ namespace MinecraftLauncherDSS
             // checkBox_FecharAoIniciar
             // 
             this.checkBox_FecharAoIniciar.AutoSize = true;
+            this.checkBox_FecharAoIniciar.Checked = true;
+            this.checkBox_FecharAoIniciar.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox_FecharAoIniciar.Location = new System.Drawing.Point(348, 298);
             this.checkBox_FecharAoIniciar.Name = "checkBox_FecharAoIniciar";
             this.checkBox_FecharAoIniciar.Size = new System.Drawing.Size(104, 17);
@@ -273,6 +289,7 @@ namespace MinecraftLauncherDSS
             this.panel_Barra.PerformLayout();
             this.panel_Principal.ResumeLayout(false);
             this.panel_Principal.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_UUID)).EndInit();
             this.groupBox_Download.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -299,6 +316,7 @@ namespace MinecraftLauncherDSS
         private System.Windows.Forms.Label label_Titulo;
         private System.Windows.Forms.CheckBox checkBox_FecharAoIniciar;
         private System.Windows.Forms.CheckBox checkBox_Demo;
+        private System.Windows.Forms.PictureBox pictureBox_UUID;
     }
 }
 
