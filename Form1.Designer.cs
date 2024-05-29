@@ -45,13 +45,23 @@ namespace MinecraftLauncherDSS
             this.label_Titulo = new System.Windows.Forms.Label();
             this.button_Minimizar = new System.Windows.Forms.Button();
             this.panel_Principal = new System.Windows.Forms.Panel();
-            this.pictureBox_UUID = new System.Windows.Forms.PictureBox();
-            this.checkBox_Demo = new System.Windows.Forms.CheckBox();
+            this.groupBox_config = new System.Windows.Forms.GroupBox();
+            this.button_load_comands = new System.Windows.Forms.Button();
+            this.label_comandos = new System.Windows.Forms.Label();
+            this.textBox_Comandos = new System.Windows.Forms.TextBox();
+            this.button_save_config = new System.Windows.Forms.Button();
+            this.checkBox_ADM = new System.Windows.Forms.CheckBox();
+            this.button_config_X = new System.Windows.Forms.Button();
             this.checkBox_FecharAoIniciar = new System.Windows.Forms.CheckBox();
+            this.checkBox_Demo = new System.Windows.Forms.CheckBox();
+            this.pictureBox_UUID = new System.Windows.Forms.PictureBox();
             this.comboBox_gameVersion = new System.Windows.Forms.ComboBox();
             this.groupBox_Download = new System.Windows.Forms.GroupBox();
+            this.button_configs = new System.Windows.Forms.Button();
+            this.checkBox_imagens_fundo = new System.Windows.Forms.CheckBox();
             this.panel_Barra.SuspendLayout();
             this.panel_Principal.SuspendLayout();
+            this.groupBox_config.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_UUID)).BeginInit();
             this.groupBox_Download.SuspendLayout();
             this.SuspendLayout();
@@ -68,14 +78,14 @@ namespace MinecraftLauncherDSS
             // 
             // textBox_username
             // 
-            this.textBox_username.Location = new System.Drawing.Point(90, 292);
+            this.textBox_username.Location = new System.Drawing.Point(244, 344);
             this.textBox_username.Name = "textBox_username";
             this.textBox_username.Size = new System.Drawing.Size(98, 20);
             this.textBox_username.TabIndex = 1;
             // 
             // textBox_uuid
             // 
-            this.textBox_uuid.Location = new System.Drawing.Point(90, 318);
+            this.textBox_uuid.Location = new System.Drawing.Point(82, 185);
             this.textBox_uuid.Name = "textBox_uuid";
             this.textBox_uuid.Size = new System.Drawing.Size(200, 20);
             this.textBox_uuid.TabIndex = 2;
@@ -83,7 +93,7 @@ namespace MinecraftLauncherDSS
             // 
             // textBox_accessToken
             // 
-            this.textBox_accessToken.Location = new System.Drawing.Point(90, 344);
+            this.textBox_accessToken.Location = new System.Drawing.Point(82, 211);
             this.textBox_accessToken.Name = "textBox_accessToken";
             this.textBox_accessToken.Size = new System.Drawing.Size(200, 20);
             this.textBox_accessToken.TabIndex = 4;
@@ -91,7 +101,7 @@ namespace MinecraftLauncherDSS
             // label_nick
             // 
             this.label_nick.AutoSize = true;
-            this.label_nick.Location = new System.Drawing.Point(17, 295);
+            this.label_nick.Location = new System.Drawing.Point(171, 347);
             this.label_nick.Name = "label_nick";
             this.label_nick.Size = new System.Drawing.Size(67, 13);
             this.label_nick.TabIndex = 5;
@@ -100,7 +110,7 @@ namespace MinecraftLauncherDSS
             // label_uuid
             // 
             this.label_uuid.AutoSize = true;
-            this.label_uuid.Location = new System.Drawing.Point(26, 321);
+            this.label_uuid.Location = new System.Drawing.Point(18, 188);
             this.label_uuid.Name = "label_uuid";
             this.label_uuid.Size = new System.Drawing.Size(58, 13);
             this.label_uuid.TabIndex = 6;
@@ -109,7 +119,7 @@ namespace MinecraftLauncherDSS
             // label_token
             // 
             this.label_token.AutoSize = true;
-            this.label_token.Location = new System.Drawing.Point(12, 347);
+            this.label_token.Location = new System.Drawing.Point(4, 214);
             this.label_token.Name = "label_token";
             this.label_token.Size = new System.Drawing.Size(75, 13);
             this.label_token.TabIndex = 8;
@@ -199,23 +209,125 @@ namespace MinecraftLauncherDSS
             // panel_Principal
             // 
             this.panel_Principal.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
+            this.panel_Principal.Controls.Add(this.groupBox_config);
             this.panel_Principal.Controls.Add(this.pictureBox_UUID);
-            this.panel_Principal.Controls.Add(this.checkBox_Demo);
-            this.panel_Principal.Controls.Add(this.checkBox_FecharAoIniciar);
             this.panel_Principal.Controls.Add(this.comboBox_gameVersion);
             this.panel_Principal.Controls.Add(this.groupBox_Download);
             this.panel_Principal.Controls.Add(this.button_Jogar);
             this.panel_Principal.Controls.Add(this.textBox_username);
-            this.panel_Principal.Controls.Add(this.textBox_uuid);
-            this.panel_Principal.Controls.Add(this.textBox_accessToken);
             this.panel_Principal.Controls.Add(this.label_nick);
-            this.panel_Principal.Controls.Add(this.label_uuid);
-            this.panel_Principal.Controls.Add(this.label_token);
+            this.panel_Principal.Controls.Add(this.button_configs);
             this.panel_Principal.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel_Principal.Location = new System.Drawing.Point(0, 35);
             this.panel_Principal.Name = "panel_Principal";
             this.panel_Principal.Size = new System.Drawing.Size(820, 379);
             this.panel_Principal.TabIndex = 17;
+            // 
+            // groupBox_config
+            // 
+            this.groupBox_config.Controls.Add(this.checkBox_imagens_fundo);
+            this.groupBox_config.Controls.Add(this.button_load_comands);
+            this.groupBox_config.Controls.Add(this.label_comandos);
+            this.groupBox_config.Controls.Add(this.textBox_Comandos);
+            this.groupBox_config.Controls.Add(this.button_save_config);
+            this.groupBox_config.Controls.Add(this.checkBox_ADM);
+            this.groupBox_config.Controls.Add(this.button_config_X);
+            this.groupBox_config.Controls.Add(this.checkBox_FecharAoIniciar);
+            this.groupBox_config.Controls.Add(this.textBox_uuid);
+            this.groupBox_config.Controls.Add(this.textBox_accessToken);
+            this.groupBox_config.Controls.Add(this.checkBox_Demo);
+            this.groupBox_config.Controls.Add(this.label_token);
+            this.groupBox_config.Controls.Add(this.label_uuid);
+            this.groupBox_config.Location = new System.Drawing.Point(3, 139);
+            this.groupBox_config.Name = "groupBox_config";
+            this.groupBox_config.Size = new System.Drawing.Size(520, 237);
+            this.groupBox_config.TabIndex = 21;
+            this.groupBox_config.TabStop = false;
+            this.groupBox_config.Text = "                                                                           Config" +
+    "urações";
+            this.groupBox_config.Visible = false;
+            // 
+            // button_load_comands
+            // 
+            this.button_load_comands.Location = new System.Drawing.Point(360, 167);
+            this.button_load_comands.Name = "button_load_comands";
+            this.button_load_comands.Size = new System.Drawing.Size(154, 23);
+            this.button_load_comands.TabIndex = 24;
+            this.button_load_comands.Text = "Restaurar comandos padrão";
+            this.button_load_comands.UseVisualStyleBackColor = true;
+            this.button_load_comands.Click += new System.EventHandler(this.button_load_comands_Click);
+            // 
+            // label_comandos
+            // 
+            this.label_comandos.AutoSize = true;
+            this.label_comandos.Location = new System.Drawing.Point(5, 73);
+            this.label_comandos.Name = "label_comandos";
+            this.label_comandos.Size = new System.Drawing.Size(60, 13);
+            this.label_comandos.TabIndex = 22;
+            this.label_comandos.Text = "Comandos:";
+            // 
+            // textBox_Comandos
+            // 
+            this.textBox_Comandos.Location = new System.Drawing.Point(71, 70);
+            this.textBox_Comandos.Multiline = true;
+            this.textBox_Comandos.Name = "textBox_Comandos";
+            this.textBox_Comandos.Size = new System.Drawing.Size(443, 68);
+            this.textBox_Comandos.TabIndex = 22;
+            this.textBox_Comandos.Text = "-Xmx4G -Xms4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=" +
+    "20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
+            // 
+            // button_save_config
+            // 
+            this.button_save_config.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.button_save_config.Location = new System.Drawing.Point(458, 208);
+            this.button_save_config.Name = "button_save_config";
+            this.button_save_config.Size = new System.Drawing.Size(56, 23);
+            this.button_save_config.TabIndex = 22;
+            this.button_save_config.Text = "Salvar";
+            this.button_save_config.UseVisualStyleBackColor = true;
+            this.button_save_config.Click += new System.EventHandler(this.button_save_config_Click);
+            // 
+            // checkBox_ADM
+            // 
+            this.checkBox_ADM.AutoSize = true;
+            this.checkBox_ADM.Location = new System.Drawing.Point(6, 19);
+            this.checkBox_ADM.Name = "checkBox_ADM";
+            this.checkBox_ADM.Size = new System.Drawing.Size(149, 17);
+            this.checkBox_ADM.TabIndex = 23;
+            this.checkBox_ADM.Text = "Iniciar como Administrador";
+            this.checkBox_ADM.UseVisualStyleBackColor = true;
+            // 
+            // button_config_X
+            // 
+            this.button_config_X.Location = new System.Drawing.Point(500, 5);
+            this.button_config_X.Name = "button_config_X";
+            this.button_config_X.Size = new System.Drawing.Size(20, 20);
+            this.button_config_X.TabIndex = 22;
+            this.button_config_X.Text = "X";
+            this.button_config_X.UseVisualStyleBackColor = true;
+            this.button_config_X.Click += new System.EventHandler(this.button_config_X_Click);
+            // 
+            // checkBox_FecharAoIniciar
+            // 
+            this.checkBox_FecharAoIniciar.AutoSize = true;
+            this.checkBox_FecharAoIniciar.Checked = true;
+            this.checkBox_FecharAoIniciar.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_FecharAoIniciar.Location = new System.Drawing.Point(313, 19);
+            this.checkBox_FecharAoIniciar.Name = "checkBox_FecharAoIniciar";
+            this.checkBox_FecharAoIniciar.Size = new System.Drawing.Size(181, 17);
+            this.checkBox_FecharAoIniciar.TabIndex = 18;
+            this.checkBox_FecharAoIniciar.Text = "Fechar essa tela ao iniciar o jogo";
+            this.checkBox_FecharAoIniciar.UseVisualStyleBackColor = true;
+            // 
+            // checkBox_Demo
+            // 
+            this.checkBox_Demo.AutoSize = true;
+            this.checkBox_Demo.Location = new System.Drawing.Point(6, 42);
+            this.checkBox_Demo.Name = "checkBox_Demo";
+            this.checkBox_Demo.Size = new System.Drawing.Size(54, 17);
+            this.checkBox_Demo.TabIndex = 19;
+            this.checkBox_Demo.Text = "Demo";
+            this.checkBox_Demo.UseVisualStyleBackColor = true;
             // 
             // pictureBox_UUID
             // 
@@ -226,28 +338,6 @@ namespace MinecraftLauncherDSS
             this.pictureBox_UUID.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.pictureBox_UUID.TabIndex = 20;
             this.pictureBox_UUID.TabStop = false;
-            // 
-            // checkBox_Demo
-            // 
-            this.checkBox_Demo.AutoSize = true;
-            this.checkBox_Demo.Location = new System.Drawing.Point(194, 294);
-            this.checkBox_Demo.Name = "checkBox_Demo";
-            this.checkBox_Demo.Size = new System.Drawing.Size(54, 17);
-            this.checkBox_Demo.TabIndex = 19;
-            this.checkBox_Demo.Text = "Demo";
-            this.checkBox_Demo.UseVisualStyleBackColor = true;
-            // 
-            // checkBox_FecharAoIniciar
-            // 
-            this.checkBox_FecharAoIniciar.AutoSize = true;
-            this.checkBox_FecharAoIniciar.Checked = true;
-            this.checkBox_FecharAoIniciar.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_FecharAoIniciar.Location = new System.Drawing.Point(348, 298);
-            this.checkBox_FecharAoIniciar.Name = "checkBox_FecharAoIniciar";
-            this.checkBox_FecharAoIniciar.Size = new System.Drawing.Size(104, 17);
-            this.checkBox_FecharAoIniciar.TabIndex = 18;
-            this.checkBox_FecharAoIniciar.Text = "Fechar ao iniciar";
-            this.checkBox_FecharAoIniciar.UseVisualStyleBackColor = true;
             // 
             // comboBox_gameVersion
             // 
@@ -271,6 +361,28 @@ namespace MinecraftLauncherDSS
             this.groupBox_Download.TabStop = false;
             this.groupBox_Download.Text = "Download";
             // 
+            // button_configs
+            // 
+            this.button_configs.Location = new System.Drawing.Point(12, 344);
+            this.button_configs.Name = "button_configs";
+            this.button_configs.Size = new System.Drawing.Size(90, 23);
+            this.button_configs.TabIndex = 14;
+            this.button_configs.Text = "Configurações";
+            this.button_configs.UseVisualStyleBackColor = true;
+            this.button_configs.Click += new System.EventHandler(this.button_configs_Click);
+            // 
+            // checkBox_imagens_fundo
+            // 
+            this.checkBox_imagens_fundo.AutoSize = true;
+            this.checkBox_imagens_fundo.Checked = true;
+            this.checkBox_imagens_fundo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_imagens_fundo.Location = new System.Drawing.Point(313, 42);
+            this.checkBox_imagens_fundo.Name = "checkBox_imagens_fundo";
+            this.checkBox_imagens_fundo.Size = new System.Drawing.Size(111, 17);
+            this.checkBox_imagens_fundo.TabIndex = 25;
+            this.checkBox_imagens_fundo.Text = "Imagens ao fundo";
+            this.checkBox_imagens_fundo.UseVisualStyleBackColor = true;
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -289,6 +401,8 @@ namespace MinecraftLauncherDSS
             this.panel_Barra.PerformLayout();
             this.panel_Principal.ResumeLayout(false);
             this.panel_Principal.PerformLayout();
+            this.groupBox_config.ResumeLayout(false);
+            this.groupBox_config.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox_UUID)).EndInit();
             this.groupBox_Download.ResumeLayout(false);
             this.ResumeLayout(false);
@@ -317,6 +431,15 @@ namespace MinecraftLauncherDSS
         private System.Windows.Forms.CheckBox checkBox_FecharAoIniciar;
         private System.Windows.Forms.CheckBox checkBox_Demo;
         private System.Windows.Forms.PictureBox pictureBox_UUID;
+        private System.Windows.Forms.Button button_configs;
+        private System.Windows.Forms.GroupBox groupBox_config;
+        private System.Windows.Forms.Button button_config_X;
+        private System.Windows.Forms.CheckBox checkBox_ADM;
+        private System.Windows.Forms.Button button_save_config;
+        private System.Windows.Forms.Button button_load_comands;
+        private System.Windows.Forms.Label label_comandos;
+        private System.Windows.Forms.TextBox textBox_Comandos;
+        private System.Windows.Forms.CheckBox checkBox_imagens_fundo;
     }
 }
 

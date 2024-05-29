@@ -30,7 +30,7 @@ namespace MinecraftLauncherDSS
 
         //bool operatingSystem64bit = Environment.Is64BitOperatingSystem;
 
-        string gameDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft2";
+        string gameDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft";
         string username;        // Nick
         string uuid;            // Skin/Capa
         string gameVersion;     // Version 
@@ -69,10 +69,14 @@ namespace MinecraftLauncherDSS
         {
             comboBox_TypeDownload.Items.Add("Versão");
             comboBox_TypeDownload.SelectedIndex = 0;
-
-            baixarImagemBackgroud();
+            
             verificarVersoesBaixadas();
-            pegarNick_uuid_checkBox();
+            carregarVariaveisSalvas_configs();
+
+            if (checkBox_imagens_fundo.Checked)
+            {
+                baixarImagemBackgroud();
+            }
         }
 
 
@@ -139,12 +143,12 @@ namespace MinecraftLauncherDSS
             }
             catch (Exception)
             {
-                // Nada :)
+                MessageBox.Show("Você ainda não tem uma versão baixada, selecione a versão 'release' e escolha a ultima versão para baixar!");
             }
         }
 
 
-        private void pegarNick_uuid_checkBox()
+        private void carregarVariaveisSalvas_configs()
         {
             string usernameFilePath = Path.Combine(gameDir, "nick.txt");
             if (File.Exists(usernameFilePath))
@@ -164,6 +168,35 @@ namespace MinecraftLauncherDSS
                 string checkBoxState = File.ReadAllText(checkBox_FecharAoIniciarFilePath);
                 checkBox_FecharAoIniciar.Checked = bool.Parse(checkBoxState);
             }
+
+            string checkBox_ADMFilePath = Path.Combine(gameDir, "checkBox_ADM.txt");
+            if (File.Exists(checkBox_ADMFilePath))
+            {
+                string checkBoxState = File.ReadAllText(checkBox_ADMFilePath);
+                checkBox_ADM.Checked = bool.Parse(checkBoxState);
+            }
+
+            string checkBox_DemoFilePath = Path.Combine(gameDir, "checkBox_Demo.txt");
+            if (File.Exists(checkBox_DemoFilePath))
+            {
+                string checkBoxState = File.ReadAllText(checkBox_DemoFilePath);
+                checkBox_Demo.Checked = bool.Parse(checkBoxState);
+            }
+
+            string checkBox_ComandosFilePath = Path.Combine(gameDir, "checkBox_Comandos.txt");
+            if (File.Exists(checkBox_ComandosFilePath))
+            {
+                string checkBoxState = File.ReadAllText(checkBox_ComandosFilePath);
+                textBox_Comandos.Text = checkBoxState;
+            }
+
+            string checkBox_imagens_fundoFilePath = Path.Combine(gameDir, "checkBox_imagens_fundo.txt");
+            if (File.Exists(checkBox_imagens_fundoFilePath))
+            {
+                string checkBoxState = File.ReadAllText(checkBox_imagens_fundoFilePath);
+                checkBox_imagens_fundo.Checked = bool.Parse(checkBoxState);
+            }
+
         }
 
 
@@ -194,9 +227,6 @@ namespace MinecraftLauncherDSS
                     string uuidFilePath = Path.Combine(gameDir, "uuid.txt");
                     File.WriteAllText(uuidFilePath, textBox_uuid.Text);
                 }
-
-                string checkBox_FecharAoIniciarFilePath = Path.Combine(gameDir, "checkBox_FecharAoIniciar.txt");
-                File.WriteAllText(checkBox_FecharAoIniciarFilePath, checkBox_FecharAoIniciar.Checked.ToString());
 
                 if (textBox_uuid.Text == "")
                 {
@@ -262,11 +292,12 @@ namespace MinecraftLauncherDSS
 
                 javaRuntime = gameDir + @"\javas\" + json_iniciar.javaVersion + @"\bin\javaw.exe";
 
-                //string comandoAzul = javaRuntime + " -Xss1M -cp "; //cmd
                 string comandoAzul = " -Xss1M -cp ";
                 string classpath = string.Join(";", json_iniciar.LibraryPaths);
-                comandoAzul += classpath + ";" + gameDir + @"\versions\" + comboBox_gameVersion.Text + @"\" + comboBox_gameVersion.Text + @".jar" + @" -Xmx4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M -Dlog4j.configurationFile=" + gameDir + @"\assets\log_configs\" + json_iniciar.Dlog4j + " net.minecraft.client.main.Main ";
-
+                comandoAzul += classpath + ";" + gameDir + @"\versions\" + comboBox_gameVersion.Text + @"\" +
+                    comboBox_gameVersion.Text + @".jar" + @" "+textBox_Comandos.Text+
+                    " -Dlog4j.configurationFile=" + gameDir + @"\assets\log_configs\" + json_iniciar.Dlog4j +
+                    " net.minecraft.client.main.Main ";
 
                 foreach (var item in json_iniciar.arguments)
                 {
@@ -299,23 +330,35 @@ namespace MinecraftLauncherDSS
                     comandoAzul += " -demo";
                 }
 
-                // abrir pelo CMD
-                //System.Diagnostics.Process Minecraft = new System.Diagnostics.Process();
-                //System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
-                ////startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden; // Esconde o CMD
-                //startInfo.FileName = "cmd.exe";
-                //startInfo.Arguments = "/C " + comandoAzul;
-                //Minecraft.StartInfo = startInfo;
-                //Minecraft.Start();
-
                 // abrir direto pelo JAVAW
-                ProcessStartInfo startInfo = new ProcessStartInfo(javaRuntime, comandoAzul);
-                Process javaProcess = new Process();
-                javaProcess.StartInfo = startInfo;
-                javaProcess.Start();
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    FileName = javaRuntime,
+                    Arguments = comandoAzul,
+                    UseShellExecute = true // Necessário para usar "runas"
+                };
 
+                if (checkBox_ADM.Checked)
+                {
+                    startInfo.Verb = "runas"; // Executar como administrador
+                }
 
-                if (checkBox_FecharAoIniciar.Checked == true)
+                try
+                {
+                    Process javaProcess = new Process
+                    {
+                        StartInfo = startInfo
+                    };
+                    javaProcess.Start();
+                }
+                catch (Exception exception)
+                {
+                    // Capturar exceção se o usuário cancelar o prompt UAC
+                    Console.WriteLine("O processo não pôde ser iniciado: " + exception.Message);
+                }
+
+                // Fechar ao iniciar
+                if (checkBox_FecharAoIniciar.Checked)
                 {
                     Environment.Exit(1);
                 }
@@ -594,7 +637,6 @@ namespace MinecraftLauncherDSS
                 {
                     Directory.CreateDirectory(gameDir + "/assets/objects/"+ hash_2);
                 }
-
                 download(urlDownload, "assets/objects/"+hash_2, hash);
             }
 
@@ -671,7 +713,6 @@ namespace MinecraftLauncherDSS
                 java86 = from p in jsonObj_filesGame["windows-x86"][javaVersion] select (string)p["manifest"]["url"],
             };
 
-
             if (Environment.Is64BitOperatingSystem)
             {
                 foreach (var conteudo in json_java.java64)
@@ -692,7 +733,6 @@ namespace MinecraftLauncherDSS
                     }
                 }
             }
-
 
             download(url_Javao, "javas/" + javaVersion, javaVersion + ".json");
             // https://piston-meta.mojang.com/v1/packages/74f9ec828e19df89c6bc7366d1048c5a315119e8/manifest.json
@@ -807,7 +847,7 @@ namespace MinecraftLauncherDSS
 
         private void textBox_uuid_TextChanged(object sender, EventArgs e)
         {
-            if (textBox_uuid.Text.Length == 32)
+            if (checkBox_imagens_fundo.Checked && textBox_uuid.Text.Length == 32)
             {
                 try
                 {
@@ -826,6 +866,40 @@ namespace MinecraftLauncherDSS
                     throw;
                 }
             }
+        }
+
+        private void button_configs_Click(object sender, EventArgs e)
+        {
+            groupBox_config.Visible = true;
+        }
+
+        private void button_config_X_Click(object sender, EventArgs e)
+        {
+            groupBox_config.Visible = false;
+        }
+
+        private void button_save_config_Click(object sender, EventArgs e)
+        {
+            string checkBox_FecharAoIniciarFilePath = Path.Combine(gameDir, "checkBox_FecharAoIniciar.txt");
+            File.WriteAllText(checkBox_FecharAoIniciarFilePath, checkBox_FecharAoIniciar.Checked.ToString());
+
+            string checkBox_ADMFilePath = Path.Combine(gameDir, "checkBox_ADM.txt");
+            File.WriteAllText(checkBox_ADMFilePath, checkBox_ADM.Checked.ToString());
+
+            string checkBox_DEMOFilePath = Path.Combine(gameDir, "checkBox_Demo.txt");
+            File.WriteAllText(checkBox_DEMOFilePath, checkBox_Demo.Checked.ToString());
+
+            string checkBox_ComandosFilePath = Path.Combine(gameDir, "checkBox_Comandos.txt");
+            File.WriteAllText(checkBox_ComandosFilePath, textBox_Comandos.Text);
+
+            string checkBox_imagens_fundoFilePath = Path.Combine(gameDir, "checkBox_imagens_fundo.txt");
+            File.WriteAllText(checkBox_imagens_fundoFilePath, checkBox_imagens_fundo.Checked.ToString());
+
+        }
+
+        private void button_load_comands_Click(object sender, EventArgs e)
+        {
+            textBox_Comandos.Text = "-Xmx4G -Xms4G -XX:+UnlockExperimentalVMOptions -XX:+UseG1GC -XX:G1NewSizePercent=20 -XX:G1ReservePercent=20 -XX:MaxGCPauseMillis=50 -XX:G1HeapRegionSize=32M";
         }
     }
 }
