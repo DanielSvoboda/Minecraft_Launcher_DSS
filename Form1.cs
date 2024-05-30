@@ -209,10 +209,12 @@ namespace MinecraftLauncherDSS
             if (username.Length < 3 || username.Length > 16)
             {
                 MessageBox.Show("O Nick deve ter entre 3 e 16 caracteres.");
+                return;
             }
             else if (!username.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '.'))
             {
                 MessageBox.Show("O Nick só pode conter letras, números, sublinhados e pontos.");
+                return;
             }
             else
             {
@@ -222,15 +224,29 @@ namespace MinecraftLauncherDSS
                     File.WriteAllText(usernameFilePath, textBox_username.Text);
                 }
 
-                if (textBox_uuid.Text != "")
-                {
-                    string uuidFilePath = Path.Combine(gameDir, "uuid.txt");
-                    File.WriteAllText(uuidFilePath, textBox_uuid.Text);
-                }
-
                 if (textBox_uuid.Text == "")
                 {
-                    uuid = "dab2e2bbd58247ce8404516910f54d74";
+                    if (string.IsNullOrEmpty(textBox_uuid.Text))
+                    {
+                        string username = textBox_username.Text;
+                        string url_uuid = $"https://api.mojang.com/users/profiles/minecraft/{username}";
+
+                        using (HttpClient client = new HttpClient())
+                        {
+                            HttpResponseMessage response = client.GetAsync(url_uuid).Result;
+                            if (response.IsSuccessStatusCode)
+                            {
+                                string responseBody = response.Content.ReadAsStringAsync().Result;
+                                JObject json = JObject.Parse(responseBody);
+                                uuid = json["id"].ToString();
+                            }
+                            else
+                            {
+                                MessageBox.Show("UUID invalido, será continuado normalmente."); ;
+                                uuid = "dab2e2bbd58247ce8404516910f54d74";
+                            }
+                        }
+                    }
                 }
                 else
                 {
@@ -254,7 +270,7 @@ namespace MinecraftLauncherDSS
                     arguments = jsonObj_filesGame["arguments"]["game"],                         //
                     Dlog4j = (string)jsonObj_filesGame["logging"]["client"]["file"]["id"],
 
-                    //HeapDumpPath = (string)jsonObj_filesGame["jvm"]["XX:HeapDumpPath"],       //MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump -deve ser desnecessario, 
+                    //HeapDumpPath = (string)jsonObj_filesGame["jvm"]["XX:HeapDumpPath"],       //MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump
                     //OsName = (string)jsonObj_filesGame["jvm"]["Dos.name"],                    //Windows 10
                     //OsVersion = (string)jsonObj_filesGame["jvm"]["Dos.version"],              //10.0
 
@@ -354,7 +370,7 @@ namespace MinecraftLauncherDSS
                 catch (Exception exception)
                 {
                     // Capturar exceção se o usuário cancelar o prompt UAC
-                    Console.WriteLine("O processo não pôde ser iniciado: " + exception.Message);
+                    MessageBox.Show("O processo JAVA não pôde ser iniciado:\n\n" + exception.Message);
                 }
 
                 // Fechar ao iniciar
@@ -569,7 +585,7 @@ namespace MinecraftLauncherDSS
                 path_libraries = from p in jsonObj_filesGame["libraries"] select (string)p["downloads"]["artifact"]["path"],
                 url_libraries = from p in jsonObj_filesGame["libraries"] select (string)p["downloads"]["artifact"]["url"],
                 java = (string)jsonObj_filesGame["javaVersion"]["component"], // java-runtime-gamma
-                                                                              //os_libraries = from p in json["libraries"] select (string)p["rules"]["os"]["name"],
+                //os_libraries = from p in json["libraries"] select (string)p["rules"]["os"]["name"],
             };
 
             label_Titulo.Invoke((Action)(() =>
@@ -644,9 +660,6 @@ namespace MinecraftLauncherDSS
             }
 
 
-            //label_Titulo.Text = "MINECRAFT LAUCHER DSS";
-            //label_Titulo.Location = new Point(336, 11);
-
             await Task.Delay(2000);
 
             label_Titulo.Invoke((Action)(() =>
@@ -719,7 +732,7 @@ namespace MinecraftLauncherDSS
 
             json_java json_java = new json_java
             {
-                java64 = from p in jsonObj_filesGame["windows-x64"][javaVersion] select (string)p["manifest"]["url"],
+                java64 = from p in jsonObj_filesGame["windows-x64"][javaVersion] select (string)p["manifest"]["url"],   //https://piston-meta.mojang.com/v1/packages/74f9ec828e19df89c6bc7366d1048c5a315119e8/manifest.json
                 java86 = from p in jsonObj_filesGame["windows-x86"][javaVersion] select (string)p["manifest"]["url"],
             };
 
@@ -792,8 +805,8 @@ namespace MinecraftLauncherDSS
                     int lastSlashIndex = item.LastIndexOf("/");
                     if (lastSlashIndex >= 0)
                     {
-                        string arquivo = item.Substring(lastSlashIndex + 1);
-                        string diretorio = item.Substring(0, lastSlashIndex);
+                        string arquivo = item.Substring(lastSlashIndex + 1);        // Corta na ultima  \  apaga oque tem antes
+                        string diretorio = item.Substring(0, lastSlashIndex);       // Corta na ultima  \  apaga oque tem depois
 
                         await download(json_java_files.url, "javas/" + javaVersion + "/" + diretorio, arquivo);
 
@@ -804,7 +817,6 @@ namespace MinecraftLauncherDSS
                     }
                 }
             }
-
 
         }
 
@@ -874,7 +886,7 @@ namespace MinecraftLauncherDSS
                 catch (Exception)
                 {
                     pictureBox_UUID.Image = null;
-                    throw;
+                    MessageBox.Show("Não foi possivel carregar a imagem de preview da skin!\nTalvez você estejá sem internet ¯\\_(ツ)_/¯ ");
                 }
             }
         }
@@ -905,6 +917,12 @@ namespace MinecraftLauncherDSS
 
             string checkBox_imagens_fundoFilePath = Path.Combine(gameDir, "checkBox_imagens_fundo.txt");
             File.WriteAllText(checkBox_imagens_fundoFilePath, checkBox_imagens_fundo.Checked.ToString());
+
+            string usernameFilePath = Path.Combine(gameDir, "nick.txt");
+            File.WriteAllText(usernameFilePath, textBox_username.Text);            
+
+            string uuidFilePath = Path.Combine(gameDir, "uuid.txt");
+            File.WriteAllText(uuidFilePath, textBox_uuid.Text);        
 
         }
 

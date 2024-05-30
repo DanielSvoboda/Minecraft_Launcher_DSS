@@ -29,7 +29,6 @@ namespace MinecraftLauncherDSS
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.button_Jogar = new System.Windows.Forms.Button();
             this.textBox_username = new System.Windows.Forms.TextBox();
             this.textBox_uuid = new System.Windows.Forms.TextBox();
@@ -46,6 +45,7 @@ namespace MinecraftLauncherDSS
             this.button_Minimizar = new System.Windows.Forms.Button();
             this.panel_Principal = new System.Windows.Forms.Panel();
             this.groupBox_config = new System.Windows.Forms.GroupBox();
+            this.checkBox_imagens_fundo = new System.Windows.Forms.CheckBox();
             this.button_load_comands = new System.Windows.Forms.Button();
             this.label_comandos = new System.Windows.Forms.Label();
             this.textBox_Comandos = new System.Windows.Forms.TextBox();
@@ -58,7 +58,6 @@ namespace MinecraftLauncherDSS
             this.comboBox_gameVersion = new System.Windows.Forms.ComboBox();
             this.groupBox_Download = new System.Windows.Forms.GroupBox();
             this.button_configs = new System.Windows.Forms.Button();
-            this.checkBox_imagens_fundo = new System.Windows.Forms.CheckBox();
             this.panel_Barra.SuspendLayout();
             this.panel_Principal.SuspendLayout();
             this.groupBox_config.SuspendLayout();
@@ -247,6 +246,18 @@ namespace MinecraftLauncherDSS
     "urações";
             this.groupBox_config.Visible = false;
             // 
+            // checkBox_imagens_fundo
+            // 
+            this.checkBox_imagens_fundo.AutoSize = true;
+            this.checkBox_imagens_fundo.Checked = true;
+            this.checkBox_imagens_fundo.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.checkBox_imagens_fundo.Location = new System.Drawing.Point(313, 42);
+            this.checkBox_imagens_fundo.Name = "checkBox_imagens_fundo";
+            this.checkBox_imagens_fundo.Size = new System.Drawing.Size(111, 17);
+            this.checkBox_imagens_fundo.TabIndex = 25;
+            this.checkBox_imagens_fundo.Text = "Imagens ao fundo";
+            this.checkBox_imagens_fundo.UseVisualStyleBackColor = true;
+            // 
             // button_load_comands
             // 
             this.button_load_comands.Location = new System.Drawing.Point(360, 167);
@@ -371,18 +382,6 @@ namespace MinecraftLauncherDSS
             this.button_configs.UseVisualStyleBackColor = true;
             this.button_configs.Click += new System.EventHandler(this.button_configs_Click);
             // 
-            // checkBox_imagens_fundo
-            // 
-            this.checkBox_imagens_fundo.AutoSize = true;
-            this.checkBox_imagens_fundo.Checked = true;
-            this.checkBox_imagens_fundo.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.checkBox_imagens_fundo.Location = new System.Drawing.Point(313, 42);
-            this.checkBox_imagens_fundo.Name = "checkBox_imagens_fundo";
-            this.checkBox_imagens_fundo.Size = new System.Drawing.Size(111, 17);
-            this.checkBox_imagens_fundo.TabIndex = 25;
-            this.checkBox_imagens_fundo.Text = "Imagens ao fundo";
-            this.checkBox_imagens_fundo.UseVisualStyleBackColor = true;
-            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -392,7 +391,6 @@ namespace MinecraftLauncherDSS
             this.Controls.Add(this.panel_Principal);
             this.Controls.Add(this.panel_Barra);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Minecraft Launcher DSS";
