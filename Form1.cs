@@ -41,7 +41,7 @@ namespace MinecraftLauncherDSS
         string[,] conteudoCompleto = new string[1000, 4];    // linhas,colunas
         string[,] arrayLibraries = new string[200, 2];       // linhas,colunas
         string[,] arrayAssets = new string[5000, 2];         // linhas,colunas
-        string[,] arrayArquivosJava = new string[1000,1];    // linhas,colunas
+        string[,] arrayArquivosJava = new string[1000, 1];    // linhas,colunas
 
         bool verificarVersao = false;
 
@@ -69,7 +69,7 @@ namespace MinecraftLauncherDSS
         {
             comboBox_TypeDownload.Items.Add("Versão");
             comboBox_TypeDownload.SelectedIndex = 0;
-            
+
             verificarVersoesBaixadas();
             carregarVariaveisSalvas_configs();
 
@@ -204,7 +204,7 @@ namespace MinecraftLauncherDSS
         {
             if (comboBox_gameVersion.Text == "") return;
 
-            string url = gameDir + @"\versions\"+ comboBox_gameVersion.Text +@"\"+ comboBox_gameVersion.Text + ".json";
+            string url = gameDir + @"\versions\" + comboBox_gameVersion.Text + @"\" + comboBox_gameVersion.Text + ".json";
             username = textBox_username.Text;
             if (username.Length < 3 || username.Length > 16)
             {
@@ -236,7 +236,7 @@ namespace MinecraftLauncherDSS
                 {
                     uuid = textBox_uuid.Text;
                 }
-                
+
                 gameVersion = comboBox_gameVersion.Text;
                 accessToken = textBox_accessToken.Text;
 
@@ -295,7 +295,7 @@ namespace MinecraftLauncherDSS
                 string comandoAzul = " -Xss1M -cp ";
                 string classpath = string.Join(";", json_iniciar.LibraryPaths);
                 comandoAzul += classpath + ";" + gameDir + @"\versions\" + comboBox_gameVersion.Text + @"\" +
-                    comboBox_gameVersion.Text + @".jar" + @" "+textBox_Comandos.Text+
+                    comboBox_gameVersion.Text + @".jar" + @" " + textBox_Comandos.Text +
                     " -Dlog4j.configurationFile=" + gameDir + @"\assets\log_configs\" + json_iniciar.Dlog4j +
                     " net.minecraft.client.main.Main ";
 
@@ -540,20 +540,21 @@ namespace MinecraftLauncherDSS
 
         private async void button_Baixar_Click(object sender, EventArgs e)
         {
-            this.Enabled = false; 
+            this.Enabled = false;
+            MessageBox.Show("O download da versão " + comboBox_VersionsDownload.Text + " foi iniciado!\nVocê pode acompanhar o progresso na barra acima.\nClique em OK e aguarde a conclusão do download.");
+
             criarPastas(comboBox_VersionsDownload.Text);
-            
+
             string url = ""; // Pega o url da versão selecionada no comboBox
 
             for (var i = 0; i < conteudoCompleto.Length; i++)
             {
-                if (conteudoCompleto[i,0] == comboBox_VersionsDownload.Text)
+                if (conteudoCompleto[i, 0] == comboBox_VersionsDownload.Text)
                 {
                     url = conteudoCompleto[i, 2];
                     break;
                 }
             }
-
 
             WebRequest solicitacao = HttpWebRequest.Create(url);
             WebResponse resposta = solicitacao.GetResponse();
@@ -563,35 +564,39 @@ namespace MinecraftLauncherDSS
             json_filesGame json_filesGame = new json_filesGame
             {
                 url_client = (string)jsonObj_filesGame["downloads"]["client"]["url"],
-                assetIndex  = (string)jsonObj_filesGame["assetIndex"]["url"],
+                assetIndex = (string)jsonObj_filesGame["assetIndex"]["url"],
                 log_configs = (string)jsonObj_filesGame["logging"]["client"]["file"]["url"],
-
                 path_libraries = from p in jsonObj_filesGame["libraries"] select (string)p["downloads"]["artifact"]["path"],
-                url_libraries  = from p in jsonObj_filesGame["libraries"] select (string)p["downloads"]["artifact"]["url"],
-
-                java = (string)jsonObj_filesGame["javaVersion"]["component"], //java-runtime-gamma
-
-                //os_libraries = from p in json["libraries"] select (string)p["rules"]["os"]["name"],
+                url_libraries = from p in jsonObj_filesGame["libraries"] select (string)p["downloads"]["artifact"]["url"],
+                java = (string)jsonObj_filesGame["javaVersion"]["component"], // java-runtime-gamma
+                                                                              //os_libraries = from p in json["libraries"] select (string)p["rules"]["os"]["name"],
             };
 
-            label_Titulo.Location = new Point(9, 11);
+            label_Titulo.Invoke((Action)(() =>
+            {
+                label_Titulo.Location = new Point(9, 11);
+            }));
 
-            download_javao(json_filesGame.java);                                                                                        // JAVA             todos os arquivos do java 
-            download(url, "versions/" + comboBox_VersionsDownload.Text, "");                                                            //1.19.4.json       contem os argumentos..
-            download(json_filesGame.url_client, "versions/" + comboBox_VersionsDownload.Text, comboBox_VersionsDownload.Text + ".jar"); //1.19.4.jar        jar
-            download(json_filesGame.assetIndex, "assets/indexes", "");                                                                 //3.json            (hash dos arquivos)
-            download(json_filesGame.log_configs, "assets/log_configs", "");                                                             //client-1.12.xml   (nada importante)
+            await download_javao(json_filesGame.java);                                                                                        // JAVA             todos os arquivos do java 
+            await download(url, "versions/" + comboBox_VersionsDownload.Text, "");                                                            // 1.19.4.json       contem os argumentos..
+            await download(json_filesGame.url_client, "versions/" + comboBox_VersionsDownload.Text, comboBox_VersionsDownload.Text + ".jar"); // 1.19.4.jar        jar
+            await download(json_filesGame.assetIndex, "assets/indexes", "");                                                                 // 3.json            (hash dos arquivos)
+            await download(json_filesGame.log_configs, "assets/log_configs", "");                                                             // client-1.12.xml   (nada importante)
 
-            
             // Armazena no arrayLibraries 1,0=path_libraries | 1,1=url_libraries   - caminho/url
             int contadeiro = 0;
             foreach (var conteudo in json_filesGame.path_libraries)
             {
-                if (conteudo != null)
+                if (conteudo != null && conteudo.ToString().Contains("/"))
                 {
-                    string filename = conteudo.ToString().Substring(0, conteudo.ToString().LastIndexOf("/"));
-                    addArray2(contadeiro, filename, "path_libraries");
-                    contadeiro++;
+                    string path = conteudo.ToString();
+                    int lastSlashIndex = path.LastIndexOf("/");
+                    if (lastSlashIndex >= 0)
+                    {
+                        string filename = path.Substring(0, lastSlashIndex);
+                        addArray2(contadeiro, filename, "path_libraries");
+                        contadeiro++;
+                    }
                 }
             }
 
@@ -609,47 +614,53 @@ namespace MinecraftLauncherDSS
             // Baixa as Bibliotecas/Libraries da arrayLibraries
             for (var i = 0; i < contadeiro; i++)
             {
-                if (arrayLibraries[i, 1] != null )
+                if (arrayLibraries[i, 1] != null)
                 {
                     if (!Directory.Exists(gameDir + "/libraries/" + arrayLibraries[i, 1]))
                     {
                         Directory.CreateDirectory(gameDir + "/libraries/" + arrayLibraries[i, 0]);
                     }
-                    download(arrayLibraries[i, 1], "libraries/" + arrayLibraries[i, 0], "");
-                }      
+                    await download(arrayLibraries[i, 1], "libraries/" + arrayLibraries[i, 0], "");
+                }
             }
 
-
-            // Baixa as assets   imagens/sons/lingua...            \.minecraft2\assets\indexes\3.json            
+            // Baixa as assets   imagens/sons/lingua...            \.minecraft2\assets\indexes\3.json    
             string assets_indexes_Json = json_filesGame.assetIndex.Substring(json_filesGame.assetIndex.LastIndexOf("/") + 1);
-            var json_assets = File.ReadAllText(gameDir + @"\assets\indexes\"+ assets_indexes_Json);
+            var json_assets = File.ReadAllText(gameDir + @"\assets\indexes\" + assets_indexes_Json);
             var result = JsonConvert.DeserializeObject<Json_assets>(json_assets);
-
 
             foreach (KeyValuePair<string, Objects_assets> pair in result.objects)
             {
                 string path_Assets = pair.Key;
                 string hash = pair.Value.hash;
                 string hash_2 = hash.Substring(0, 2);
-                string urlDownload = url_assets + "/" + hash_2 + "/"+ hash;
-                
-                if (!Directory.Exists(gameDir + "/assets/objects/"+ hash_2))
+                string urlDownload = url_assets + "/" + hash_2 + "/" + hash;
+
+                if (!Directory.Exists(gameDir + "/assets/objects/" + hash_2))
                 {
-                    Directory.CreateDirectory(gameDir + "/assets/objects/"+ hash_2);
+                    Directory.CreateDirectory(gameDir + "/assets/objects/" + hash_2);
                 }
-                download(urlDownload, "assets/objects/"+hash_2, hash);
+                await download(urlDownload, "assets/objects/" + hash_2, hash);
             }
+
+
+            //label_Titulo.Text = "MINECRAFT LAUCHER DSS";
+            //label_Titulo.Location = new Point(336, 11);
 
             await Task.Delay(2000);
 
-            label_Titulo.Text = "MINECRAFT LAUCHER DSS";
-            label_Titulo.Location = new Point(336, 11);
+            label_Titulo.Invoke((Action)(() =>
+            {
+                label_Titulo.Text = "MINECRAFT LAUCHER DSS";
+                label_Titulo.Location = new Point(336, 11);
+            }));
 
             verificarVersoesBaixadas();
 
             MessageBox.Show("Versão " + comboBox_VersionsDownload.Text + " baixada com sucesso!");
             this.Enabled = true;
         }
+
 
 
 
@@ -691,7 +702,7 @@ namespace MinecraftLauncherDSS
 
 
 
-        private void download_javao(string javaVersion)
+        private async Task download_javao(string javaVersion)
         {
             string dirJava = gameDir + "/javas/" + javaVersion;
             if (!Directory.Exists(dirJava))
@@ -706,10 +717,9 @@ namespace MinecraftLauncherDSS
             StreamReader ler_get = new StreamReader(resposta.GetResponseStream());
             JObject jsonObj_filesGame = JObject.Parse(ler_get.ReadToEnd());
 
-
             json_java json_java = new json_java
             {
-                java64 = from p in jsonObj_filesGame["windows-x64"][javaVersion] select (string)p["manifest"]["url"],       //https://piston-meta.mojang.com/v1/packages/74f9ec828e19df89c6bc7366d1048c5a315119e8/manifest.json
+                java64 = from p in jsonObj_filesGame["windows-x64"][javaVersion] select (string)p["manifest"]["url"],
                 java86 = from p in jsonObj_filesGame["windows-x86"][javaVersion] select (string)p["manifest"]["url"],
             };
 
@@ -734,7 +744,7 @@ namespace MinecraftLauncherDSS
                 }
             }
 
-            download(url_Javao, "javas/" + javaVersion, javaVersion + ".json");
+            await download(url_Javao, "javas/" + javaVersion, javaVersion + ".json");
             // https://piston-meta.mojang.com/v1/packages/74f9ec828e19df89c6bc7366d1048c5a315119e8/manifest.json
 
 
@@ -742,6 +752,7 @@ namespace MinecraftLauncherDSS
             var json_assets = File.ReadAllText(dirJava + "/" + javaVersion + ".json");
             var result = JsonConvert.DeserializeObject<Json_assets_seila>(json_assets);
             //var result = JsonConvert.DeserializeObject<Json_assets_seila>(ler_get2.ToString());
+
 
             int linha = 0;
             foreach (KeyValuePair<string, Objects_assets_seila> pair in result.files)
@@ -764,7 +775,6 @@ namespace MinecraftLauncherDSS
                 }
             }
 
-
             WebRequest solicitacao2 = HttpWebRequest.Create(url_Javao);
             WebResponse resposta2 = solicitacao2.GetResponse();
             StreamReader ler_get2 = new StreamReader(resposta2.GetResponseStream());
@@ -772,47 +782,48 @@ namespace MinecraftLauncherDSS
 
             foreach (var item in arrayArquivosJava)
             {
-                if (item != null & item != "")
+                if (!string.IsNullOrEmpty(item) && item.Contains("/"))
                 {
                     json_java_files json_java_files = new json_java_files
                     {
-                        //url = from p in jsonObj_filesGame2["files"][item] select (string)p["downloads"]["raw"]["url"],
                         url = (string)jsonObj_filesGame2["files"][item]["downloads"]["raw"]["url"],
-                        // trocar raw por lzma, e descompactar
                     };
 
-                    if (item != "release")
+                    int lastSlashIndex = item.LastIndexOf("/");
+                    if (lastSlashIndex >= 0)
                     {
-                        string arquivo = item.Substring(item.LastIndexOf("/") + 1);     // Corta na ultima  \  apaga oque tem antes
-                        string diretorio = item.Substring(0, item.LastIndexOf("/"));    // Corta na ultima  \  apaga oque tem depois
+                        string arquivo = item.Substring(lastSlashIndex + 1);
+                        string diretorio = item.Substring(0, lastSlashIndex);
 
-                        download(json_java_files.url, "javas/" + javaVersion + "/" + diretorio, arquivo);
-                    }
-                    else
-                    {
-                        download(json_java_files.url, "javas/" + javaVersion, item);
-                    }
+                        await download(json_java_files.url, "javas/" + javaVersion + "/" + diretorio, arquivo);
 
-                    label_Titulo.Text = "Baixando: " + item;
+                        label_Titulo.Invoke((Action)(() =>
+                        {
+                            label_Titulo.Text = "Baixando: " + item;
+                        }));
+                    }
                 }
             }
+
+
         }
 
 
 
         // Exemplo:   download( "https://www.google.com/robots.txt", "assets/objects" , "robots.txt" );
-        private void download(string url, string diretorio, string nome)
+        private async Task download(string url, string diretorio, string nome)
         {
             using (WebClient wc = new WebClient())
             {
                 // Se o parametro 'nome' estiver em branco, vai usar o nome 'original'
                 nome = (nome == "") ? url.Substring(url.LastIndexOf("/") + 1) : nome;
 
-                // Download do arquivo de forma síncrona
-                wc.DownloadFile(url, gameDir + "/" + diretorio + "/" + nome);
+                // Download do arquivo de forma assíncrona
+                await wc.DownloadFileTaskAsync(new Uri(url), gameDir + "/" + diretorio + "/" + nome);
 
-                // Atualizar a interface do usuário após o download / NÃO FUNCIONA DIREITO :/
-                label_Titulo.Invoke((Action)(() => {
+                // Atualizar a interface do usuário após o download
+                label_Titulo.Invoke((Action)(() =>
+                {
                     label_Titulo.Text = "Baixando: " + diretorio + "/" + nome;
                 }));
             }
@@ -829,7 +840,7 @@ namespace MinecraftLauncherDSS
                 comboBox_TypeDownload.Items.Add("release");
                 comboBox_TypeDownload.Items.Add("snapshot");
                 comboBox_TypeDownload.Items.Add("old_beta");
-                comboBox_TypeDownload.Items.Add("old_alpha");            
+                comboBox_TypeDownload.Items.Add("old_alpha");
             }
         }
 
@@ -852,13 +863,13 @@ namespace MinecraftLauncherDSS
                 try
                 {
                     string url = "https://api.mineatar.io/body/full/";
-                        using (WebClient webClient = new WebClient())
+                    using (WebClient webClient = new WebClient())
+                    {
+                        using (Stream stream = webClient.OpenRead(url + textBox_uuid.Text + "?scale=10"))
                         {
-                            using (Stream stream = webClient.OpenRead(url + textBox_uuid.Text + "?scale=10"))
-                            {
                             pictureBox_UUID.Image = Image.FromStream(stream);
-                            }
                         }
+                    }
                 }
                 catch (Exception)
                 {
