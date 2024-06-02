@@ -28,7 +28,6 @@ namespace MinecraftLauncherDSS
             InitializeComponent();
         }
 
-        //bool operatingSystem64bit = Environment.Is64BitOperatingSystem;
 
         string gameDir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\.minecraft";
         string username;        // Nick
@@ -36,6 +35,7 @@ namespace MinecraftLauncherDSS
         string gameVersion;     // Version 
         string accessToken;     // Authenticator Token
         string javaRuntime;     // Pasta java
+        //bool operatingSystem64bit = Environment.Is64BitOperatingSystem;
 
         // revisar o tamanha das variaveis...  ¯\_(ツ)_/¯ 
         string[,] conteudoCompleto = new string[1000, 4];    // linhas,colunas
@@ -224,28 +224,20 @@ namespace MinecraftLauncherDSS
                     File.WriteAllText(usernameFilePath, textBox_username.Text);
                 }
 
+                if (textBox_uuid.Text.Length != 0 && textBox_uuid.Text.Length < 32)
+                {
+                    MessageBox.Show("O campo UUID deve conter 32 caracteres.\n\n" +
+                                    "Recomendo deixar este campo em branco,\n" +
+                                    "pois será usado o UUID a partir do nick.");
+
+                    return;
+                }
+
                 if (textBox_uuid.Text == "")
                 {
                     if (string.IsNullOrEmpty(textBox_uuid.Text))
                     {
-                        string username = textBox_username.Text;
-                        string url_uuid = $"https://api.mojang.com/users/profiles/minecraft/{username}";
-
-                        using (HttpClient client = new HttpClient())
-                        {
-                            HttpResponseMessage response = client.GetAsync(url_uuid).Result;
-                            if (response.IsSuccessStatusCode)
-                            {
-                                string responseBody = response.Content.ReadAsStringAsync().Result;
-                                JObject json = JObject.Parse(responseBody);
-                                uuid = json["id"].ToString();
-                            }
-                            else
-                            {
-                                MessageBox.Show("UUID invalido, será continuado normalmente."); ;
-                                uuid = "dab2e2bbd58247ce8404516910f54d74";
-                            }
-                        }
+                        uuid = GetUuid(textBox_username.Text);
                     }
                 }
                 else
@@ -397,6 +389,57 @@ namespace MinecraftLauncherDSS
                 }
             }
         }
+
+        public static string GetUuid(string nick)
+        {
+            string uuid = "default_value";
+
+            try
+            {
+                string url_uuid = $"https://api.mojang.com/users/profiles/minecraft/{nick}";
+
+                using (WebClient client = new WebClient())
+                {
+                    // Definindo cabeçalhos comuns para emular um navegador
+                    client.Headers.Add(HttpRequestHeader.Accept, "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7");
+                    client.Headers.Add(HttpRequestHeader.AcceptEncoding, "gzip, deflate, br, zstd");
+                    client.Headers.Add(HttpRequestHeader.AcceptLanguage, "pt-BR,pt;q=0.9");
+                    client.Headers.Add(HttpRequestHeader.CacheControl, "no-cache");
+                    client.Headers.Add(HttpRequestHeader.Pragma, "no-cache");
+                    client.Headers.Add("Priority", "u=0, i");
+                    client.Headers.Add("Sec-Ch-Ua", "\"Google Chrome\";v=\"125\", \"Chromium\";v=\"125\", \"Not.A/Brand\";v=\"24\"");
+                    client.Headers.Add("Sec-Ch-Ua-Mobile", "?0");
+                    client.Headers.Add("Sec-Ch-Ua-Platform", "\"Windows\"");
+                    client.Headers.Add("Sec-Fetch-Dest", "document");
+                    client.Headers.Add("Sec-Fetch-Mode", "navigate");
+                    client.Headers.Add("Sec-Fetch-Site", "none");
+                    client.Headers.Add("Sec-Fetch-User", "?1");
+                    client.Headers.Add(HttpRequestHeader.Upgrade, "1");
+                    client.Headers.Add(HttpRequestHeader.UserAgent, "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/125.0.0.0 Safari/537.36");
+
+                    string responseBody = client.DownloadString(url_uuid); // Realiza a requisição de forma síncrona
+                    JObject json = JObject.Parse(responseBody);
+                    uuid = json["id"].ToString();
+                }
+            }
+            catch (WebException ex)
+            {
+                if (ex.Response is HttpWebResponse response)
+                {
+                    MessageBox.Show(response.StatusCode.ToString());
+                    MessageBox.Show("UUID inválido, será continuado normalmente.");
+                }
+                else
+                {
+                    MessageBox.Show("Ocorreu um erro: " + ex.Message);
+                }
+
+                uuid = "dab2e2bbd58247ce8404516910f54d74";
+            }
+
+            return uuid;
+        }
+
 
 
         JObject jsonObj;
@@ -862,35 +905,12 @@ namespace MinecraftLauncherDSS
             this.WindowState = FormWindowState.Minimized;
         }
 
-
         private void button_FecharTUDO_Click(object sender, EventArgs e)
         {
             Environment.Exit(1);
         }
 
-        private void textBox_uuid_TextChanged(object sender, EventArgs e)
-        {
-            if (checkBox_imagens_fundo.Checked && textBox_uuid.Text.Length == 32)
-            {
-                try
-                {
-                    string url = "https://api.mineatar.io/body/full/";
-                    using (WebClient webClient = new WebClient())
-                    {
-                        using (Stream stream = webClient.OpenRead(url + textBox_uuid.Text + "?scale=10"))
-                        {
-                            pictureBox_UUID.Image = Image.FromStream(stream);
-                        }
-                    }
-                }
-                catch (Exception)
-                {
-                    pictureBox_UUID.Image = null;
-                    MessageBox.Show("Não foi possivel carregar a imagem de preview da skin!\nTalvez você estejá sem internet ¯\\_(ツ)_/¯ ");
-                }
-            }
-        }
-
+       
         private void button_configs_Click(object sender, EventArgs e)
         {
             groupBox_config.Visible = true;
@@ -919,11 +939,21 @@ namespace MinecraftLauncherDSS
             File.WriteAllText(checkBox_imagens_fundoFilePath, checkBox_imagens_fundo.Checked.ToString());
 
             string usernameFilePath = Path.Combine(gameDir, "nick.txt");
-            File.WriteAllText(usernameFilePath, textBox_username.Text);            
+            File.WriteAllText(usernameFilePath, textBox_username.Text);
 
             string uuidFilePath = Path.Combine(gameDir, "uuid.txt");
-            File.WriteAllText(uuidFilePath, textBox_uuid.Text);        
+            File.WriteAllText(uuidFilePath, textBox_uuid.Text);
 
+            groupBox_config.Visible = false;
+
+            if (checkBox_imagens_fundo.Checked)
+            {
+                baixarImagemBackgroud();
+            }
+            else
+            {
+                panel_Principal.BackgroundImage = null;
+            }
         }
 
         private void button_load_comands_Click(object sender, EventArgs e)

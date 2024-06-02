@@ -54,14 +54,12 @@ namespace MinecraftLauncherDSS
             this.button_config_X = new System.Windows.Forms.Button();
             this.checkBox_FecharAoIniciar = new System.Windows.Forms.CheckBox();
             this.checkBox_Demo = new System.Windows.Forms.CheckBox();
-            this.pictureBox_UUID = new System.Windows.Forms.PictureBox();
             this.comboBox_gameVersion = new System.Windows.Forms.ComboBox();
             this.groupBox_Download = new System.Windows.Forms.GroupBox();
             this.button_configs = new System.Windows.Forms.Button();
             this.panel_Barra.SuspendLayout();
             this.panel_Principal.SuspendLayout();
             this.groupBox_config.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_UUID)).BeginInit();
             this.groupBox_Download.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -88,7 +86,6 @@ namespace MinecraftLauncherDSS
             this.textBox_uuid.Name = "textBox_uuid";
             this.textBox_uuid.Size = new System.Drawing.Size(200, 20);
             this.textBox_uuid.TabIndex = 2;
-            this.textBox_uuid.TextChanged += new System.EventHandler(this.textBox_uuid_TextChanged);
             // 
             // textBox_accessToken
             // 
@@ -209,7 +206,6 @@ namespace MinecraftLauncherDSS
             // 
             this.panel_Principal.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.panel_Principal.Controls.Add(this.groupBox_config);
-            this.panel_Principal.Controls.Add(this.pictureBox_UUID);
             this.panel_Principal.Controls.Add(this.comboBox_gameVersion);
             this.panel_Principal.Controls.Add(this.groupBox_Download);
             this.panel_Principal.Controls.Add(this.button_Jogar);
@@ -340,16 +336,6 @@ namespace MinecraftLauncherDSS
             this.checkBox_Demo.Text = "Demo";
             this.checkBox_Demo.UseVisualStyleBackColor = true;
             // 
-            // pictureBox_UUID
-            // 
-            this.pictureBox_UUID.BackColor = System.Drawing.Color.Transparent;
-            this.pictureBox_UUID.Location = new System.Drawing.Point(20, 6);
-            this.pictureBox_UUID.Name = "pictureBox_UUID";
-            this.pictureBox_UUID.Size = new System.Drawing.Size(124, 278);
-            this.pictureBox_UUID.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.pictureBox_UUID.TabIndex = 20;
-            this.pictureBox_UUID.TabStop = false;
-            // 
             // comboBox_gameVersion
             // 
             this.comboBox_gameVersion.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
@@ -401,7 +387,6 @@ namespace MinecraftLauncherDSS
             this.panel_Principal.PerformLayout();
             this.groupBox_config.ResumeLayout(false);
             this.groupBox_config.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.pictureBox_UUID)).EndInit();
             this.groupBox_Download.ResumeLayout(false);
             this.ResumeLayout(false);
 
@@ -428,7 +413,6 @@ namespace MinecraftLauncherDSS
         private System.Windows.Forms.Label label_Titulo;
         private System.Windows.Forms.CheckBox checkBox_FecharAoIniciar;
         private System.Windows.Forms.CheckBox checkBox_Demo;
-        private System.Windows.Forms.PictureBox pictureBox_UUID;
         private System.Windows.Forms.Button button_configs;
         private System.Windows.Forms.GroupBox groupBox_config;
         private System.Windows.Forms.Button button_config_X;
